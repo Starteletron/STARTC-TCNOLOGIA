@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <meta charset="utf-8">
-<title>Teste API (JSONP)</title>
+<title>Teste StarC API</title>
 <body>
-  <h1>Teste Apps Script (JSONP)</h1>
-  <pre id="out">Carregando…</pre>
-  <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbyFq5F34foKQz9WG-7NnUv0Z4lIz88pawB7h1ADVSISlGnCNqZmGwlInFjNdGTvUBZt/exec'; // ex: https://script.google.com/macros/s/AKfy.../exec
+  <h1>Teste da conexão com o servidor StarC</h1>
+  <pre id="out">Carregando...</pre>
 
-    function apiCallback(data){
-      document.getElementById('out').textContent = JSON.stringify(data, null, 2);
+  <script>
+    const URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhFOy5iHe7qI1Sjc9tSalZSmjUfPJ938izzhpoPFXF-mGnQZcSd1UVuRbc-3UCF2jtfGYJBb8tBejq_OkyPFDT5XyCW_LD_UFNbn36J3cX9verqgVs29VGG3vrz16TVnSlJL0Q1OeD8hJkBktL_1kKq-fmuM93E-HeLFBn2vgPJesoUhAReU1PJqhJfFyj76k-whvBsKzhv1oZGxnKCXDmJe5h3t87WNtoWM3oG7nokXQrRb24kNSZAk5QfIT3x4nk6g3FvdXmz1gPsu9W-bNIUNknllA&lib=MZLXwSrR-lu0DZcmckpykCDr5UI-PC8DI';
+
+    async function testarAPI() {
+      try {
+        const response = await fetch(URL);
+        const data = await response.json();
+        document.getElementById('out').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('out').textContent = '❌ Erro ao conectar à API: ' + err;
+      }
     }
 
-    const s = document.createElement('script');
-    s.src = `${URL}?callback=apiCallback`;
-    s.onerror = () => document.getElementById('out').textContent = 'Erro ao carregar (verifique URL /exec e deploy).';
-    document.body.appendChild(s);
+    testarAPI();
   </script>
 </body>
 </html>

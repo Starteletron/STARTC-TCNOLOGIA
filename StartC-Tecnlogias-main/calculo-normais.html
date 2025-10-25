@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Apurar Normais – StarC</title>
+<link rel="stylesheet" href="styles.css" />
+<script src="js/auth.js" data-protected="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body id="calculo-normais">
+<header>
+<div class="logo-container">
+<a href="index.html"><img src="logo.png" alt="Logo da StarC Tecnologias" class="logo-img" /></a>
+<h1>Apurar Normais</h1>
+<button id="menu-toggle" aria-label="Abrir Menu">☰</button>
+</div>
+<nav class="nav-desktop">
+<a href="ferramentas.html">Ferramentas</a>
+<a href="suporte/neybot-chromedriver.html">Suporte NEYBOT</a>
+</nav>
+</header>
+<nav id="sidebar" class="nav-mobile">
+<a href="ferramentas.html">Ferramentas</a>
+<a href="suporte/neybot-chromedriver.html">Suporte NEYBOT</a>
+</nav>
+
+
+<div class="container">
+<h1>Relatório de Retenções de Impostos</h1>
+<div class="form-item">
+<label for="zipInput">Escolha o arquivo ZIP:</label>
+<label class="btn-upload" for="zipInput">Selecionar o ZIP</label>
+<input type="file" id="zipInput" accept=".zip" />
+</div>
+<div class="cta"><button onclick="processarZip()">Processar Arquivo ZIP</button></div>
+<div id="resultadoImpostos" style="display:none" class="card">
+<h3>Totais Consolidados:</h3>
+<p><strong>Total de Notas:</strong> <span id="totalNotas">R$ 0,00</span></p>
+<h4>Totais por Imposto (Retidos):</h4>
+<p><strong>ISS:</strong> <span id="totalISS">R$ 0,00</span></p>
+<p><strong>PIS:</strong> <span id="totalPIS_Retido">R$ 0,00</span></p>
+<p><strong>COFINS:</strong> <span id="totalCOFINS_Retido">R$ 0,00</span></p>
+<p><strong>CSLL:</strong> <span id="totalCSLL_Retido">R$ 0,00</span></p>

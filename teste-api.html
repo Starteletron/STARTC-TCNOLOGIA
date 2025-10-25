@@ -1,3 +1,23 @@
-<script>
-fetch('https://script.google.com/macros/s/AKfycbyFq5F34foKQz9WG-7NnUv0Z4lIz88pawB7h1ADVSISlGnCNqZmGwlInFjNdGTvUBZt/exec').then(r=>r.text()).then(console.log).catch(console.error);
-</script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<meta charset="utf-8">
+<title>Teste API</title>
+<body>
+  <h1>Teste Apps Script</h1>
+  <pre id="out">Chamando...</pre>
+  <script>
+    const URL = 'https://script.google.com/macros/s/AKfycbyFq5F34foKQz9WG-7NnUv0Z4lIz88pawB7h1ADVSISlGnCNqZmGwlInFjNdGTvUBZt/exec'; // ex: https://script.google.com/macros/s/AKfycb.../exec
+
+    fetch(URL, { method: 'GET' })
+      .then(async r => {
+        // Mostra status e corpo ou erro de CORS
+        const txt = await r.text();
+        document.getElementById('out').textContent =
+          `HTTP ${r.status}\n\n${txt}`;
+      })
+      .catch(err => {
+        document.getElementById('out').textContent = 'ERRO: ' + err;
+      });
+  </script>
+</body>
+</html>

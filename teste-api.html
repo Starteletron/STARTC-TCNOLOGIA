@@ -9,8 +9,8 @@ const URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=A
   try {
     const r = await fetch(URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ tipo: 'login_google', email: 'teste@exemplo.com', nome: 'Teste' })
+      headers: {'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+      body: new URLSearchParams({ q: JSON.stringify({ tipo:'login_google', email:'teste@exemplo.com', nome:'Teste' }) })
     });
     const txt = await r.text();
     document.getElementById('out').textContent = `HTTP ${r.status}\n\n${txt}`;

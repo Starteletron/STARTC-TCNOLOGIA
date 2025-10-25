@@ -6,7 +6,7 @@
   <h1>Teste Apps Script (JSONP)</h1>
   <pre id="out">Carregando…</pre>
   <script>
-    const URL = 'SUA_URL_EXEC_AQUI'; // ex: https://script.google.com/macros/s/AKfy.../exec
+    const URL = 'https://script.google.com/macros/s/AKfycbyFq5F34foKQz9WG-7NnUv0Z4lIz88pawB7h1ADVSISlGnCNqZmGwlInFjNdGTvUBZt/exec'; // ex: https://script.google.com/macros/s/AKfy.../exec
 
     function apiCallback(data){
       document.getElementById('out').textContent = JSON.stringify(data, null, 2);

@@ -2,7 +2,7 @@
 <script>
 const SUPABASE_URL  = "https://eyadhwehwhxfymsmqzlj.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5YWRod2Vod2h4Znltc21xemxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MzM0MTUsImV4cCI6MjA3NzEwOTQxNX0.IXpjHg-L3e70oYnP7ouf7w0E6g1LoKTWfOkXppJg3Qk";
-const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 async function requireAuth(){
   const { data:{ session } } = await supabase.auth.getSession();
@@ -22,3 +22,4 @@ async function requireAuth(){
 }
 requireAuth();
 </script>
+

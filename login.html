@@ -1,226 +1,279 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login — StarC Tecnologias</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Entrar • StarC Tecnologias</title>
   <style>
     :root{
-      --bg:#f6faf8; --surface:#ffffff; --text:#0f172a; --muted:#475569; --line:#e2e8f0;
-      --brand:#10b981; --brand-2:#059669; --danger:#ef4444; --ok:#16a34a; --ink:#0b1220;
+      --bg:#0b1220;           /* fundo escuro elegante */
+      --card:#111827;         /* card */
+      --muted:#94a3b8;        /* texto secundário */
+      --text:#e5e7eb;         /* texto principal */
+      --brand:#22c55e;        /* verde destaque */
+      --brand-700:#16a34a;
+      --danger:#ef4444;
+      --border:#1f2937;
+      --input:#0f172a;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:14px;
     }
-    *{box-sizing:border-box;margin:0;padding:0}
+    *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--text); background: radial-gradient(1200px 600px at 80% -10%, #d8ffe7 0%, #ffffff 60%) no-repeat, var(--bg);
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,sans-serif;
+      color:var(--text); background: radial-gradient(1200px 600px at 10% -10%, #1e293b 0%, transparent 60%), radial-gradient(900px 500px at 110% 10%, #0ea5e9 5%, transparent 55%), var(--bg);
+      display:grid; place-items:center; padding:20px;
     }
-    .wrap{min-height:100%;display:grid;place-items:center;padding:24px}
+
+    .wrap{
+      width:100%; max-width:1024px; display:grid; grid-template-columns: 1.2fr 1fr; gap:26px;
+      align-items:stretch;
+    }
+    @media (max-width: 900px){ .wrap{ grid-template-columns: 1fr; } }
+
+    .hero{
+      border:1px solid var(--border); border-radius:var(--radius); padding:32px; background:linear-gradient(145deg,#0b1220,#0a0f1a);
+      position:relative; overflow:hidden; box-shadow:var(--shadow);
+    }
+    .hero .badge{
+      display:inline-flex; align-items:center; gap:8px; font-size:12px; color:#cbd5e1; background:#0f172a; border:1px solid #1f2937; padding:6px 10px; border-radius:999px;
+    }
+    .hero h1{
+      font-size:clamp(26px,4vw,38px); line-height:1.2; margin:16px 0 10px;
+    }
+    .hero p{ color:var(--muted); margin:0 0 22px; max-width:52ch }
+    .hero .features{
+      display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; margin-top:16px;
+    }
+    .chip{
+      border:1px solid #223049; background:#0d1322; color:#cbd5e1; font-size:13px; padding:10px 12px; border-radius:10px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .glow{
+      position:absolute; inset:auto -30% -30% auto; width:480px; height:480px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(34,197,94,.25), transparent 60%);
+      filter: blur(40px); pointer-events:none;
+    }
+
     .card{
-      width:100%; max-width:980px; display:grid; grid-template-columns:1fr 1fr; gap:18px;
-      background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:22px;
-      box-shadow:0 20px 60px rgba(15,23,42,.08);
+      border:1px solid var(--border); background:linear-gradient(180deg, #0e1626, #0a0f1a);
+      border-radius:var(--radius); padding:28px; box-shadow:var(--shadow);
     }
-    .left{padding:10px 4px 10px 10px}
-    .brand{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-    .brand img{width:40px;height:40px;border-radius:10px;object-fit:contain;background:#fff}
-    .brand b{font-size:1.1rem}
-    h1{font-size:1.9rem;line-height:1.2;margin:4px 0 6px}
-    p.lead{color:var(--muted);margin-bottom:14px}
-    .feature{display:flex;gap:10px;align-items:flex-start;color:var(--muted);margin:6px 0}
-    .feature svg{min-width:18px;margin-top:2px}
-    .cta{display:flex;gap:10px;align-items:center;margin-top:10px}
-    .badge{font-size:.8rem;font-weight:800;color:#065f46;background:#d1fae5;border:1px solid #a7f3d0;border-radius:999px;padding:6px 10px}
-    .right{border-left:1px dashed var(--line);padding-left:18px}
-    .form h2{font-size:1.2rem;margin-bottom:10px}
-    label{font-weight:700;font-size:.92rem}
-    input{width:100%;margin-top:6px;margin-bottom:10px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#f8fafc}
-    button{border:none;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer}
-    .btn{background:var(--brand);color:#052e26}
-    .btn:hover{background:var(--brand-2)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .muted{color:var(--muted);font-size:.9rem}
-    .error{margin-top:8px;color:#fff;background:var(--danger);padding:10px;border-radius:10px;display:none}
-    .ok{margin-top:8px;color:#052e26;background:#bbf7d0;padding:10px;border-radius:10px;display:none}
-    .sep{display:flex;align-items:center;gap:10px;margin:14px 0}
-    .sep span{color:#64748b;font-weight:800;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase}
-    .sep:before,.sep:after{content:"";flex:1;border-top:1px solid var(--line)}
-    .gbtn{display:none;margin-top:4px}
-    .foot{margin-top:12px;color:#64748b;font-size:.85rem}
-    .legal{margin-top:8px;color:#94a3b8;font-size:.8rem}
-    @media (max-width:900px){.card{grid-template-columns:1fr}}
+    .brand{
+      display:flex; align-items:center; gap:10px; margin-bottom:16px;
+    }
+    .brand svg{ width:28px; height:28px }
+    .brand strong{ font-weight:700; letter-spacing:.2px; }
+
+    .title{ font-size:22px; margin:8px 0 4px }
+    .muted{ color:var(--muted); font-size:14px; margin:0 0 18px }
+
+    .field{ display:grid; gap:8px; margin:12px 0 }
+    label{ color:#cbd5e1; font-size:14px }
+    input{
+      width:100%; background:var(--input); border:1px solid var(--border); color:var(--text);
+      padding:12px 14px; border-radius:10px; outline:none; transition:border-color .18s ease, box-shadow .18s ease;
+    }
+    input:focus{ border-color:#334155; box-shadow:0 0 0 3px rgba(51,65,85,.25) }
+    .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:6px 0 2px }
+    .row small{ color:var(--muted) }
+    .link{ color:#93c5fd; text-decoration:none; font-size:13px }
+    .link:hover{ text-decoration:underline }
+
+    .btn{
+      width:100%; display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      background:var(--brand); color:#06250f; border:1px solid #1a2e22; font-weight:700; letter-spacing:.2px;
+      padding:12px 16px; border-radius:12px; cursor:pointer; transition:filter .18s ease, transform .04s ease;
+    }
+    .btn:hover{ filter:brightness(1.08) }
+    .btn:active{ transform:translateY(1px) }
+    .btn[disabled]{ opacity:.6; cursor:not-allowed }
+
+    .btn-ghost{
+      width:100%; margin-top:10px; background:#0f172a; color:#cbd5e1; border:1px solid #1f2937;
+    }
+
+    .err, .ok{
+      margin-top:12px; padding:10px 12px; font-size:14px; border-radius:10px; border:1px solid;
+    }
+    .err{ color:#fecaca; background:#2a0f14; border-color:#7f1d1d }
+    .ok{ color:#bbf7d0; background:#0f2a19; border-color:#14532d }
+
+    .divider{
+      display:flex; align-items:center; gap:10px; margin:14px 0; color:#94a3b8; font-size:12px;
+    }
+    .divider::before,.divider::after{ content:""; height:1px; flex:1; background:#203147 }
+    .foot{ margin-top:14px; text-align:center; color:#64748b; font-size:12px }
   </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card">
-    <!-- Lado esquerdo: branding / valor -->
-    <section class="left">
-      <div class="brand">
-        <img src="./assents/logo.png" alt="StarC">
-        <b>StarC Tecnologias</b>
-      </div>
-      <h1>Acesso seguro para assinantes</h1>
-      <p class="lead">Entre para usar as ferramentas, NEYBOT e fluxos de automação. Validação feita via Google Sheets.</p>
+  <div class="wrap">
+    <!-- Lado esquerdo (marketing) -->
+    <section class="hero">
+      <span class="badge">🚀 Acesso exclusivo • Assinantes</span>
+      <h1>Entre para usar as <span style="color:#86efac">ferramentas</span> e <span style="color:#93c5fd">automações</span> da StarC</h1>
+      <p>Ganhe tempo com processos inteligentes: NEYBOT, fluxos financeiros, automações de RH, cobrança recorrente por WhatsApp e muito mais.</p>
 
-      <div class="feature">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M9 12l2 2 4-4 1.5 1.5L11 16l-3.5-3.5L9 12zm3-9C6.48 3 2 7.48 2 13s4.48 10 10 10 10-4.48 10-10S17.52 3 12 3z"/></svg>
-        <div>Somente e-mails **Ativos** na planilha acessam.</div>
+      <div class="features">
+        <div class="chip">⚙️ NEYBOT – Robôs e RPA</div>
+        <div class="chip">📊 Análises fiscais</div>
+        <div class="chip">🤖 IA aplicada a rotinas</div>
+        <div class="chip">💬 Cobranças via WhatsApp</div>
       </div>
-      <div class="feature">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18L19 6v5c0 4.66-3.11 9.2-7 10.43C8.11 20.2 5 15.66 5 11V6l7-2.82zM7 9h10v2H7V9z"/></svg>
-        <div>Dados sensíveis não saem do seu navegador nas ferramentas.</div>
-      </div>
-      <div class="cta">
-        <span class="badge">Acesso por e-mail/senha e Google</span>
-      </div>
+      <div class="glow"></div>
     </section>
 
-    <!-- Lado direito: login -->
-    <section class="right">
-      <form class="form" id="formLogin" onsubmit="return false;">
-        <h2>Entrar</h2>
+    <!-- Lado direito (formulário de login) -->
+    <section class="card" aria-labelledby="title">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0Z" stroke="#22c55e" stroke-width="1.2"/>
+          <path d="M7 13.5 11 8l2.8 3.7L17 10l-2 6H7.8" stroke="#86efac" stroke-width="1.2" />
+        </svg>
+        <strong>StarC Tecnologias</strong>
+      </div>
+
+      <h2 id="title" class="title">Entrar</h2>
+      <p class="muted">Acesse com seu e-mail e senha. Se não tiver acesso, fale com o suporte.</p>
+
+      <form id="formLogin" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="username" placeholder="voce@empresa.com" required />
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha</label>
+          <div style="position:relative">
+            <input id="senha" name="senha" type="password" autocomplete="current-password" placeholder="••••••••" required />
+            <button type="button" id="togglePass" aria-label="Mostrar senha" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#94a3b8;cursor:pointer">👁️</button>
+          </div>
+        </div>
+
         <div class="row">
-          <div>
-            <label for="lemail">E-mail</label>
-            <input id="lemail" type="email" placeholder="voce@empresa.com" autocomplete="username" />
-          </div>
-          <div>
-            <label for="lsenha">Senha</label>
-            <input id="lsenha" type="password" placeholder="********" autocomplete="current-password" />
-          </div>
-        </div>
-        <button class="btn" id="btnLogin">Entrar</button>
-        <div id="msgError" class="error"></div>
-        <div id="msgOk" class="ok"></div>
-
-        <div class="sep"><span>ou</span></div>
-
-        <!-- Botão Google (opcional) -->
-        <div id="gWrap">
-          <div id="g_id_onload"
-               data-client_id=""
-               data-context="signin"
-               data-callback="onGoogleCredential"
-               data-auto_select="false"
-               data-itp_support="true">
-          </div>
-          <div class="g_id_signin gbtn" data-type="standard" data-size="large" data-theme="outline" data-text="signin_with" data-shape="rect" data-logo_alignment="left"></div>
-          <div class="legal">Para usar o Google, configure o <b>CLIENT_ID</b> do seu projeto. Se não configurar, este botão não aparece.</div>
+          <small>Ambiente seguro • token expira em 12h</small>
+          <a class="link" href="contato.html">Precisa de acesso?</a>
         </div>
 
-        <div class="foot">
-          Precisa de acesso? Fale com o administrador. | <a href="contato.html" style="color:#0f766e;text-decoration:none;font-weight:700">Contato</a>
-        </div>
+        <button id="btnLogin" class="btn" type="submit">Entrar</button>
+
+        <div id="msg" role="status" aria-live="polite" style="min-height:14px"></div>
+
+        <div class="divider">ou</div>
+
+        <!-- Botão “Google” opcional: seu backend deve autorizar o e-mail via /api/login-google -->
+        <button id="btnGoogle" class="btn btn-ghost" type="button">Entrar com Google (e-mail autorizado)</button>
+
+        <p class="foot">© 2025 StarC Tecnologias</p>
       </form>
     </section>
   </div>
-</div>
 
-<script>
-  // ======= CONFIGURAÇÕES =======
-  // URL googleusercontent (funciona com CORS) — já com a sua:
-  const GAS_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhFOy5iHe7qI1Sjc9tSalZSmjUfPJ938izzhpoPFXF-mGnQZcSd1UVuRbc-3UCF2jtfGYJBb8tBejq_OkyPFDT5XyCW_LD_UFNbn36J3cX9verqgVs29VGG3vrz16TVnSlJL0Q1OeD8hJkBktL_1kKq-fmuM93E-HeLFBn2vgPJesoUhAReU1PJqhJfFyj76k-whvBsKzhv1oZGxnKCXDmJe5h3t87WNtoWM3oG7nokXQrRb24kNSZAk5QfIT3x4nk6g3FvdXmz1gPsu9W-bNIUNknllA&lib=MZLXwSrR-lu0DZcmckpykCDr5UI-PC8DI';
-  const REDIRECT_AFTER = 'ferramentas.html';
+  <script>
+    // ======= CONFIGURE AQUI =======
+    const API_URL = "https://startc.gestaodecontabilidad3.workers.dev"; // sua API (Worker)
+    const REDIRECT_AFTER_LOGIN = "ferramentas.html"; // para onde enviar após login
+    // ===============================
 
-  // Se quiser Google SSO: cole seu Client ID abaixo. Se deixar vazio (""), esconde o botão.
-  const GOOGLE_CLIENT_ID = "7204769398-sg77au22ks3doi4igndhiejhrg68sfdr.apps.googleusercontent.com"; // ex: "1234567890-xxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com"
-  // =============================
+    const $ = (sel)=>document.querySelector(sel);
+    const form = $("#formLogin");
+    const btnLogin = $("#btnLogin");
+    const btnGoogle = $("#btnGoogle");
+    const out = $("#msg");
 
-  // Se já estiver logado, vai direto
-  (function autoForward(){
-    try{
-      const u = JSON.parse(localStorage.getItem('stc_user') || "null");
-      if(u && (u.email || u.nome)){ window.location.href = REDIRECT_AFTER; }
-    }catch(_){}
-  })();
+    const setMsg = (text, type='err')=>{
+      if(!text){ out.innerHTML=''; return; }
+      const cls = (type==='ok')?'ok':'err';
+      out.className = cls;
+      out.textContent = text;
+    };
 
-  const $ = (sel)=> document.querySelector(sel);
-  const msgE = $('#msgError');
-  const msgO = $('#msgOk');
-
-  function showError(txt){
-    msgO.style.display='none';
-    msgE.textContent = txt;
-    msgE.style.display='block';
-  }
-  function showOk(txt){
-    msgE.style.display='none';
-    msgO.textContent = txt;
-    msgO.style.display='block';
-  }
-
-  // Login por e-mail/senha
-  $('#btnLogin').addEventListener('click', async ()=>{
-    const email = $('#lemail').value.trim();
-    const senha = $('#lsenha').value;
-    if(!email || !senha){ showError('Informe e-mail e senha.'); return; }
-    showOk('Validando...');
-    try{
-      const r = await fetch(GAS_URL, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({tipo:'login_senha', email, senha})
+    const callAPI = async (path, payload)=>{
+      const res = await fetch(API_URL + path, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload || {})
       });
-      const data = await r.json().catch(()=> ({}));
-      if(data.status === 'ok'){
-        localStorage.setItem('stc_user', JSON.stringify(data.user));
-        showOk('Acesso liberado. Redirecionando...');
-        setTimeout(()=> window.location.href = REDIRECT_AFTER, 400);
-      }else{
-        showError(data.msg || 'Login inválido.');
+      // Mesmo quando o backend devolve status 200 com "error", retornamos o json para tratar a msg
+      let data;
+      try{ data = await res.json(); } catch{ data = {status:'error', msg:'Erro ao ler resposta'}; }
+      return data;
+    };
+
+    // Mostrar/ocultar senha
+    $("#togglePass").addEventListener("click", ()=>{
+      const i = $("#senha");
+      i.type = (i.type === "password") ? "text" : "password";
+    });
+
+    // Login por e-mail/senha
+    form.addEventListener("submit", async (ev)=>{
+      ev.preventDefault();
+      setMsg('');
+      const email = $("#email").value.trim().toLowerCase();
+      const senha = $("#senha").value;
+
+      if(!email || !senha){
+        setMsg("Informe e-mail e senha.");
+        return;
       }
-    }catch(e){
-      showError('Erro ao conectar. Verifique sua Internet ou tente novamente.');
-    }
-  });
 
-  // Google SSO — só mostra se tiver client id configurado
-  (function setupGoogle(){
-    const wrap = document.getElementById('gWrap');
-    const onloadDiv = document.getElementById('g_id_onload');
-    const btnDiv = document.querySelector('.gbtn');
-    if(!GOOGLE_CLIENT_ID){
-      wrap.style.display='none';
-      return;
-    }
-    onloadDiv.setAttribute('data-client_id', GOOGLE_CLIENT_ID);
-    btnDiv.style.display='block';
-  })();
+      btnLogin.disabled = true;
+      btnLogin.textContent = "Entrando…";
 
-  // Decodifica JWT do Google
-  function parseJwt(token){
-    const base64Url = token.split('.')[1];
-    const base64 = decodeURIComponent(atob(base64Url).split('').map(c=>'%' + ('00'+c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-    return JSON.parse(base64);
-  }
-
-  // Callback do Google SSO
-  async function onGoogleCredential(resp){
-    try{
-      const jwt = parseJwt(resp.credential);
-      showOk('Validando Google...');
-      const r = await fetch(GAS_URL, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({tipo:'login_google', email: jwt.email, nome: jwt.name})
-      });
-      const data = await r.json().catch(()=> ({}));
-      if(data.status === 'ok'){
-        localStorage.setItem('stc_user', JSON.stringify(data.user));
-        showOk('Acesso liberado. Redirecionando...');
-        setTimeout(()=> window.location.href = REDIRECT_AFTER, 400);
-      }else{
-        showError(data.msg || 'Este e-mail não está autorizado.');
+      try{
+        const data = await callAPI("/api/login", { email, senha });
+        if (data.status === "ok" && data.token){
+          // Guarda sessão local
+          localStorage.setItem("stc_token", data.token);
+          localStorage.setItem("stc_user", JSON.stringify(data.user || {}));
+          setMsg("Login realizado com sucesso.", "ok");
+          // Redireciona
+          window.location.href = REDIRECT_AFTER_LOGIN;
+          return;
+        }
+        // Tratar erros padronizados do backend
+        const msg = data && data.msg ? data.msg : "Falha no login.";
+        setMsg(msg);
+      }catch(err){
+        setMsg("Erro ao conectar. Verifique sua Internet e tente novamente.");
+      }finally{
+        btnLogin.disabled = false;
+        btnLogin.textContent = "Entrar";
       }
-    }catch(e){
-      showError('Falha ao validar o Google Sign-In.');
-    }
-  }
-  window.onGoogleCredential = onGoogleCredential;
-</script>
+    });
+
+    // Login “Google” (sem SDK): pede e-mail e chama /api/login-google (o backend valida se está autorizado)
+    btnGoogle.addEventListener("click", async ()=>{
+      setMsg('');
+      const email = prompt("Digite seu e-mail Google autorizado:");
+      if(!email) return;
+      btnGoogle.disabled = true; btnGoogle.textContent = "Validando…";
+      try{
+        const data = await callAPI("/api/login-google", { email: String(email).trim().toLowerCase(), nome: "" });
+        if (data.status === "ok" && data.token){
+          localStorage.setItem("stc_token", data.token);
+          localStorage.setItem("stc_user", JSON.stringify(data.user || {}));
+          setMsg("Login realizado com sucesso.", "ok");
+          window.location.href = REDIRECT_AFTER_LOGIN;
+          return;
+        }
+        setMsg(data.msg || "Este e-mail não está autorizado.");
+      }catch(e){
+        setMsg("Erro ao conectar. Tente novamente.");
+      }finally{
+        btnGoogle.disabled = false; btnGoogle.textContent = "Entrar com Google (e-mail autorizado)";
+      }
+    });
+
+    // (Opcional) Ping visual para você saber que a API está no ar
+    (async ()=>{
+      try{
+        const r = await fetch(API_URL + "/api/ping");
+        if(r.ok){ /* ok silencioso */ }
+      }catch{}
+    })();
+  </script>
 </body>
 </html>

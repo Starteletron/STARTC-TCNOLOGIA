@@ -1,279 +1,176 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Entrar • StarC Tecnologias</title>
-  <style>
-    :root{
-      --bg:#0b1220;           /* fundo escuro elegante */
-      --card:#111827;         /* card */
-      --muted:#94a3b8;        /* texto secundário */
-      --text:#e5e7eb;         /* texto principal */
-      --brand:#22c55e;        /* verde destaque */
-      --brand-700:#16a34a;
-      --danger:#ef4444;
-      --border:#1f2937;
-      --input:#0f172a;
-      --shadow:0 10px 30px rgba(0,0,0,.35);
-      --radius:14px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,sans-serif;
-      color:var(--text); background: radial-gradient(1200px 600px at 10% -10%, #1e293b 0%, transparent 60%), radial-gradient(900px 500px at 110% 10%, #0ea5e9 5%, transparent 55%), var(--bg);
-      display:grid; place-items:center; padding:20px;
-    }
-
-    .wrap{
-      width:100%; max-width:1024px; display:grid; grid-template-columns: 1.2fr 1fr; gap:26px;
-      align-items:stretch;
-    }
-    @media (max-width: 900px){ .wrap{ grid-template-columns: 1fr; } }
-
-    .hero{
-      border:1px solid var(--border); border-radius:var(--radius); padding:32px; background:linear-gradient(145deg,#0b1220,#0a0f1a);
-      position:relative; overflow:hidden; box-shadow:var(--shadow);
-    }
-    .hero .badge{
-      display:inline-flex; align-items:center; gap:8px; font-size:12px; color:#cbd5e1; background:#0f172a; border:1px solid #1f2937; padding:6px 10px; border-radius:999px;
-    }
-    .hero h1{
-      font-size:clamp(26px,4vw,38px); line-height:1.2; margin:16px 0 10px;
-    }
-    .hero p{ color:var(--muted); margin:0 0 22px; max-width:52ch }
-    .hero .features{
-      display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:10px; margin-top:16px;
-    }
-    .chip{
-      border:1px solid #223049; background:#0d1322; color:#cbd5e1; font-size:13px; padding:10px 12px; border-radius:10px;
-      display:flex; align-items:center; gap:8px;
-    }
-    .glow{
-      position:absolute; inset:auto -30% -30% auto; width:480px; height:480px; border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, rgba(34,197,94,.25), transparent 60%);
-      filter: blur(40px); pointer-events:none;
-    }
-
-    .card{
-      border:1px solid var(--border); background:linear-gradient(180deg, #0e1626, #0a0f1a);
-      border-radius:var(--radius); padding:28px; box-shadow:var(--shadow);
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px; margin-bottom:16px;
-    }
-    .brand svg{ width:28px; height:28px }
-    .brand strong{ font-weight:700; letter-spacing:.2px; }
-
-    .title{ font-size:22px; margin:8px 0 4px }
-    .muted{ color:var(--muted); font-size:14px; margin:0 0 18px }
-
-    .field{ display:grid; gap:8px; margin:12px 0 }
-    label{ color:#cbd5e1; font-size:14px }
-    input{
-      width:100%; background:var(--input); border:1px solid var(--border); color:var(--text);
-      padding:12px 14px; border-radius:10px; outline:none; transition:border-color .18s ease, box-shadow .18s ease;
-    }
-    input:focus{ border-color:#334155; box-shadow:0 0 0 3px rgba(51,65,85,.25) }
-    .row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:6px 0 2px }
-    .row small{ color:var(--muted) }
-    .link{ color:#93c5fd; text-decoration:none; font-size:13px }
-    .link:hover{ text-decoration:underline }
-
-    .btn{
-      width:100%; display:inline-flex; align-items:center; justify-content:center; gap:10px;
-      background:var(--brand); color:#06250f; border:1px solid #1a2e22; font-weight:700; letter-spacing:.2px;
-      padding:12px 16px; border-radius:12px; cursor:pointer; transition:filter .18s ease, transform .04s ease;
-    }
-    .btn:hover{ filter:brightness(1.08) }
-    .btn:active{ transform:translateY(1px) }
-    .btn[disabled]{ opacity:.6; cursor:not-allowed }
-
-    .btn-ghost{
-      width:100%; margin-top:10px; background:#0f172a; color:#cbd5e1; border:1px solid #1f2937;
-    }
-
-    .err, .ok{
-      margin-top:12px; padding:10px 12px; font-size:14px; border-radius:10px; border:1px solid;
-    }
-    .err{ color:#fecaca; background:#2a0f14; border-color:#7f1d1d }
-    .ok{ color:#bbf7d0; background:#0f2a19; border-color:#14532d }
-
-    .divider{
-      display:flex; align-items:center; gap:10px; margin:14px 0; color:#94a3b8; font-size:12px;
-    }
-    .divider::before,.divider::after{ content:""; height:1px; flex:1; background:#203147 }
-    .foot{ margin-top:14px; text-align:center; color:#64748b; font-size:12px }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Entrar • StarC Tecnologias</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#0b1220; --card:#111827; --muted:#94a3b8; --text:#e5e7eb;
+    --brand:#22c55e; --brand-700:#16a34a; --border:#1f2937; --input:#0f172a; --radius:14px;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0; font-family:system-ui,Segoe UI,Inter,Roboto,sans-serif; background:var(--bg); color:var(--text); display:grid; place-items:center; padding:20px;}
+  .wrap{width:100%; max-width:960px; display:grid; grid-template-columns:1.2fr 1fr; gap:26px}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr}}
+  .hero{background:linear-gradient(145deg,#0b1220,#0a0f1a); border:1px solid var(--border); border-radius:var(--radius); padding:32px}
+  .hero h1{font-size:clamp(24px,4vw,36px); margin:0 0 8px}
+  .hero p{color:var(--muted); margin:0 0 20px}
+  .card{background:linear-gradient(180deg,#0e1626,#0a0f1a); border:1px solid var(--border); border-radius:var(--radius); padding:28px}
+  .title{font-size:22px; margin:0 0 6px}
+  .muted{color:var(--muted); font-size:14px; margin:0 0 18px}
+  .field{display:grid; gap:8px; margin:12px 0}
+  label{font-size:14px; color:#cbd5e1}
+  input{width:100%; background:var(--input); border:1px solid var(--border); color:var(--text);
+        padding:12px 14px; border-radius:10px; outline:none}
+  input:focus{border-color:#334155; box-shadow:0 0 0 3px rgba(51,65,85,.25)}
+  .btn{width:100%; background:var(--brand); color:#06250f; border:1px solid #1a2e22; font-weight:700;
+       padding:12px 16px; border-radius:12px; cursor:pointer}
+  .btn-ghost{width:100%; margin-top:10px; background:#0f172a; color:#cbd5e1; border:1px solid var(--border)}
+  .row{display:flex; justify-content:space-between; align-items:center; gap:8px; margin:6px 0}
+  .link{color:#93c5fd; text-decoration:none; font-size:13px}
+  .link:hover{text-decoration:underline}
+  .err,.ok{margin-top:12px; padding:10px 12px; font-size:14px; border-radius:10px; border:1px solid}
+  .err{color:#fecaca; background:#2a0f14; border-color:#7f1d1d}
+  .ok{color:#bbf7d0; background:#0f2a19; border-color:#14532d}
+</style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Lado esquerdo (marketing) -->
     <section class="hero">
-      <span class="badge">🚀 Acesso exclusivo • Assinantes</span>
-      <h1>Entre para usar as <span style="color:#86efac">ferramentas</span> e <span style="color:#93c5fd">automações</span> da StarC</h1>
-      <p>Ganhe tempo com processos inteligentes: NEYBOT, fluxos financeiros, automações de RH, cobrança recorrente por WhatsApp e muito mais.</p>
-
-      <div class="features">
-        <div class="chip">⚙️ NEYBOT – Robôs e RPA</div>
-        <div class="chip">📊 Análises fiscais</div>
-        <div class="chip">🤖 IA aplicada a rotinas</div>
-        <div class="chip">💬 Cobranças via WhatsApp</div>
-      </div>
-      <div class="glow"></div>
+      <h1>Acesso exclusivo às ferramentas e automações</h1>
+      <p>Entre para usar o NEYBOT, análises fiscais, fluxos financeiros inteligentes, rotinas com IA e cobranças recorrentes.</p>
+      <ul style="margin:0; padding-left:18px; color:#cbd5e1; line-height:1.7">
+        <li>Assinantes com status <b>Ativo</b></li>
+        <li>Controle de acesso por <b>role</b> (user/admin)</li>
+        <li>Login por e-mail/senha e Google</li>
+      </ul>
     </section>
 
-    <!-- Lado direito (formulário de login) -->
-    <section class="card" aria-labelledby="title">
-      <div class="brand">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0Z" stroke="#22c55e" stroke-width="1.2"/>
-          <path d="M7 13.5 11 8l2.8 3.7L17 10l-2 6H7.8" stroke="#86efac" stroke-width="1.2" />
-        </svg>
-        <strong>StarC Tecnologias</strong>
-      </div>
+    <section class="card">
+      <h2 class="title">Entrar</h2>
+      <p class="muted">Use seu e-mail e senha. Para convite/acesso, fale com o suporte.</p>
 
-      <h2 id="title" class="title">Entrar</h2>
-      <p class="muted">Acesse com seu e-mail e senha. Se não tiver acesso, fale com o suporte.</p>
-
-      <form id="formLogin" novalidate>
+      <form id="formLogin">
         <div class="field">
           <label for="email">E-mail</label>
-          <input id="email" name="email" type="email" inputmode="email" autocomplete="username" placeholder="voce@empresa.com" required />
+          <input id="email" type="email" placeholder="voce@empresa.com" autocomplete="username" required />
         </div>
-
         <div class="field">
           <label for="senha">Senha</label>
-          <div style="position:relative">
-            <input id="senha" name="senha" type="password" autocomplete="current-password" placeholder="••••••••" required />
-            <button type="button" id="togglePass" aria-label="Mostrar senha" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:transparent;border:0;color:#94a3b8;cursor:pointer">👁️</button>
-          </div>
+          <input id="senha" type="password" placeholder="••••••••" autocomplete="current-password" required />
         </div>
-
         <div class="row">
-          <small>Ambiente seguro • token expira em 12h</small>
+          <a class="link" id="forgot" href="#">Esqueci minha senha</a>
           <a class="link" href="contato.html">Precisa de acesso?</a>
         </div>
-
-        <button id="btnLogin" class="btn" type="submit">Entrar</button>
-
-        <div id="msg" role="status" aria-live="polite" style="min-height:14px"></div>
-
-        <div class="divider">ou</div>
-
-        <!-- Botão “Google” opcional: seu backend deve autorizar o e-mail via /api/login-google -->
-        <button id="btnGoogle" class="btn btn-ghost" type="button">Entrar com Google (e-mail autorizado)</button>
-
-        <p class="foot">© 2025 StarC Tecnologias</p>
+        <button class="btn" type="submit" id="btnLogin">Entrar</button>
+        <div id="msg" style="min-height:14px"></div>
+        <div style="height:10px"></div>
+        <button class="btn-ghost" type="button" id="btnGoogle">Entrar com Google</button>
       </form>
     </section>
   </div>
 
-  <script>
-    // ======= CONFIGURE AQUI =======
-    const API_URL = "https://startc.gestaodecontabilidad3.workers.dev"; // sua API (Worker)
-    const REDIRECT_AFTER_LOGIN = "ferramentas.html"; // para onde enviar após login
-    // ===============================
+<script>
+  // ===== CONFIGURE AQUI =====
+  const SUPABASE_URL = "https://SEU-PROJECT.supabase.co";
+  const SUPABASE_ANON = "SEU-ANON-KEY";
+  const REDIRECT_AFTER_LOGIN = "ferramentas.html";
+  // ==========================
 
-    const $ = (sel)=>document.querySelector(sel);
-    const form = $("#formLogin");
-    const btnLogin = $("#btnLogin");
-    const btnGoogle = $("#btnGoogle");
-    const out = $("#msg");
+  const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    const setMsg = (text, type='err')=>{
-      if(!text){ out.innerHTML=''; return; }
-      const cls = (type==='ok')?'ok':'err';
-      out.className = cls;
-      out.textContent = text;
-    };
+  const $ = sel => document.querySelector(sel);
+  const msg = $("#msg");
+  const btnLogin = $("#btnLogin");
 
-    const callAPI = async (path, payload)=>{
-      const res = await fetch(API_URL + path, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload || {})
-      });
-      // Mesmo quando o backend devolve status 200 com "error", retornamos o json para tratar a msg
-      let data;
-      try{ data = await res.json(); } catch{ data = {status:'error', msg:'Erro ao ler resposta'}; }
-      return data;
-    };
+  function setMsg(text, type='err'){
+    msg.className = (type==='ok')?'ok':'err';
+    msg.textContent = text || '';
+  }
 
-    // Mostrar/ocultar senha
-    $("#togglePass").addEventListener("click", ()=>{
-      const i = $("#senha");
-      i.type = (i.type === "password") ? "text" : "password";
+  // Verifica se já está logado
+  (async ()=>{
+    const { data: { session } } = await supabase.auth.getSession();
+    if(session){
+      // opcional: checar status/role antes de redirecionar
+      const ok = await checkAccess(session);
+      if(ok) location.href = REDIRECT_AFTER_LOGIN;
+    }
+  })();
+
+  // Checa no profiles se o usuário está Ativo
+  async function checkAccess(session){
+    const user = session?.user;
+    if(!user) return false;
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('status, role, name')
+      .eq('id', user.id)
+      .single();
+    if(error){ setMsg('Erro ao verificar acesso.'); return false; }
+    if(data?.status !== 'Ativo'){ setMsg('Usuário inativo.'); return false; }
+    // guarda dados no localStorage (opcional)
+    localStorage.setItem('stc_user', JSON.stringify({
+      email: user.email, name: data?.name || '', role: data?.role || 'user'
+    }));
+    return true;
+  }
+
+  // Login com e-mail/senha
+  $("#formLogin").addEventListener("submit", async (ev)=>{
+    ev.preventDefault(); setMsg('');
+    const email = $("#email").value.trim().toLowerCase();
+    const senha = $("#senha").value;
+
+    if(!email || !senha){ setMsg('Informe e-mail e senha.'); return; }
+
+    btnLogin.disabled = true; btnLogin.textContent = "Entrando…";
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+    btnLogin.disabled = false; btnLogin.textContent = "Entrar";
+
+    if(error){ setMsg(error.message || 'Falha no login.'); return; }
+
+    const ok = await checkAccess(data.session);
+    if(ok){ location.href = REDIRECT_AFTER_LOGIN; }
+  });
+
+  // Reset de senha (e-mail com link)
+  $("#forgot").addEventListener("click", async (e)=>{
+    e.preventDefault(); setMsg('');
+    const email = $("#email").value.trim().toLowerCase();
+    if(!email){ setMsg('Digite seu e-mail no campo acima para receber o link.'); return; }
+    const redirectTo = location.origin + location.pathname.replace('login.html','login.html'); // volta para a mesma página
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    if(error){ setMsg(error.message); return; }
+    setMsg('Enviamos um link de redefinição para seu e-mail.', 'ok');
+  });
+
+  // Login com Google
+  $("#btnGoogle").addEventListener("click", async ()=>{
+    setMsg('');
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + window.location.pathname }
     });
+    if(error){ setMsg(error.message); }
+    // redireciona para Google; depois retorna aqui autenticado
+  });
 
-    // Login por e-mail/senha
-    form.addEventListener("submit", async (ev)=>{
-      ev.preventDefault();
-      setMsg('');
-      const email = $("#email").value.trim().toLowerCase();
-      const senha = $("#senha").value;
-
-      if(!email || !senha){
-        setMsg("Informe e-mail e senha.");
-        return;
-      }
-
-      btnLogin.disabled = true;
-      btnLogin.textContent = "Entrando…";
-
-      try{
-        const data = await callAPI("/api/login", { email, senha });
-        if (data.status === "ok" && data.token){
-          // Guarda sessão local
-          localStorage.setItem("stc_token", data.token);
-          localStorage.setItem("stc_user", JSON.stringify(data.user || {}));
-          setMsg("Login realizado com sucesso.", "ok");
-          // Redireciona
-          window.location.href = REDIRECT_AFTER_LOGIN;
-          return;
-        }
-        // Tratar erros padronizados do backend
-        const msg = data && data.msg ? data.msg : "Falha no login.";
-        setMsg(msg);
-      }catch(err){
-        setMsg("Erro ao conectar. Verifique sua Internet e tente novamente.");
-      }finally{
-        btnLogin.disabled = false;
-        btnLogin.textContent = "Entrar";
-      }
-    });
-
-    // Login “Google” (sem SDK): pede e-mail e chama /api/login-google (o backend valida se está autorizado)
-    btnGoogle.addEventListener("click", async ()=>{
-      setMsg('');
-      const email = prompt("Digite seu e-mail Google autorizado:");
-      if(!email) return;
-      btnGoogle.disabled = true; btnGoogle.textContent = "Validando…";
-      try{
-        const data = await callAPI("/api/login-google", { email: String(email).trim().toLowerCase(), nome: "" });
-        if (data.status === "ok" && data.token){
-          localStorage.setItem("stc_token", data.token);
-          localStorage.setItem("stc_user", JSON.stringify(data.user || {}));
-          setMsg("Login realizado com sucesso.", "ok");
-          window.location.href = REDIRECT_AFTER_LOGIN;
-          return;
-        }
-        setMsg(data.msg || "Este e-mail não está autorizado.");
-      }catch(e){
-        setMsg("Erro ao conectar. Tente novamente.");
-      }finally{
-        btnGoogle.disabled = false; btnGoogle.textContent = "Entrar com Google (e-mail autorizado)";
-      }
-    });
-
-    // (Opcional) Ping visual para você saber que a API está no ar
-    (async ()=>{
-      try{
-        const r = await fetch(API_URL + "/api/ping");
-        if(r.ok){ /* ok silencioso */ }
-      }catch{}
-    })();
-  </script>
+  // Quando voltar do link de reset, Supabase pede a nova senha:
+  (async ()=>{
+    const { data: { session } } = await supabase.auth.getSession();
+    const hash = window.location.hash || '';
+    if (hash.includes('type=recovery')) {
+      const nova = prompt('Digite sua nova senha:');
+      if(!nova) return;
+      const { data, error } = await supabase.auth.updateUser({ password: nova });
+      if(error){ setMsg(error.message); return; }
+      setMsg('Senha alterada. Você já pode entrar.', 'ok');
+    }
+  })();
+</script>
 </body>
 </html>

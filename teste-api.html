@@ -1,21 +1,22 @@
 <!DOCTYPE html>
+<html lang="pt-BR">
 <meta charset="utf-8">
-<title>Teste POST</title>
-<pre id="out">Testando...</pre>
+<title>Teste GET Worker</title>
+<pre id="out">Chamando...</pre>
 <script>
-//const URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhFOy5iHe7qI1Sjc9tSalZSmjUfPJ938izzhpoPFXF-mGnQZcSd1UVuRbc-3UCF2jtfGYJBb8tBejq_OkyPFDT5XyCW_LD_UFNbn36J3cX9verqgVs29VGG3vrz16TVnSlJL0Q1OeD8hJkBktL_1kKq-fmuM93E-HeLFBn2vgPJesoUhAReU1PJqhJfFyj76k-whvBsKzhv1oZGxnKCXDmJe5h3t87WNtoWM3oG7nokXQrRb24kNSZAk5QfIT3x4nk6g3FvdXmz1gPsu9W-bNIUNknllA&lib=MZLXwSrR-lu0DZcmckpykCDr5UI-PC8DI';
-const URL = 'https://startc.gestaodecontabilidad3.workers.dev/'
-(async () => {
-  try {
-    const r = await fetch(URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
-      body: new URLSearchParams({ q: JSON.stringify({ tipo:'login_google', email:'teste@exemplo.com', nome:'Teste' }) })
-    });
-    const txt = await r.text();
-    document.getElementById('out').textContent = `HTTP ${r.status}\n\n${txt}`;
-  } catch (e) {
-    document.getElementById('out').textContent = 'ERRO: ' + e;
+  // ⚠️ NÃO chame URL como função. Apenas use como string.
+  const URL = "https://startc.gestaodecontabilidad3.workers.dev/"; // sua URL do Worker
+
+  async function testarGET(){
+    try{
+      const r = await fetch(URL); // GET simples
+      const txt = await r.text();
+      document.getElementById('out').textContent = `HTTP ${r.status}\n\n${txt}`;
+    }catch(e){
+      document.getElementById('out').textContent = 'ERRO: ' + e;
+    }
   }
-})();
+
+  testarGET();
 </script>
+</html>

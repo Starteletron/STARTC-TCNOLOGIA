@@ -1,25 +1,309 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL  = "https://eyadhwehwhxfymsmqzlj.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5YWRod2Vod2h4Znltc21xemxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MzM0MTUsImV4cCI6MjA3NzEwOTQxNX0.IXpjHg-L3e70oYnP7ouf7w0E6g1LoKTWfOkXppJg3Qk";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ferramentas • StarC Tecnologias</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-async function requireAuth(){
-  const { data:{ session } } = await supabase.auth.getSession();
-  if(!session){ location.href = 'login.html'; return; }
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('status, role, name')
-    .eq('id', session.user.id)
-    .single();
-  if(error || data?.status !== 'Ativo'){
-    await supabase.auth.signOut();
-    location.href = 'login.html';
-    return;
-  }
-  // Aqui você pode personalizar a UI com data.role/name/email
-  console.log('Bem-vindo:', session.user.email, data.role);
-}
-requireAuth();
-</script>
+  <!-- SDK Supabase (versão UMD correta) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
 
+  <!-- Seu CSS global (opcional) -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    /* Estilos adicionais para a página de Ferramentas (leves) */
+    :root{
+      --bg:#0b1220; --card:#0f172a; --border:#1f2937; --muted:#94a3b8; --text:#e5e7eb;
+      --brand:#22c55e; --brand-700:#16a34a;
+    }
+    body{ background: var(--bg); color: var(--text); }
+    header{ background:#0a0f1a; border-bottom:1px solid var(--border); }
+    header .logo-container h1{ margin-left:8px; font-size:1.1rem; color:#cbd5e1; }
+    .nav-desktop a, .nav-mobile a { color:#cbd5e1; }
+
+    main{ max-width:1100px; margin:0 auto; padding:24px; }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin:8px 0 20px;
+    }
+    .hello{ color:#a7b3c6; font-size:.95rem; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px;
+      background:#0d1424; border:1px solid var(--border); color:#bcd;
+      font-size:.9rem;
+    }
+    .btn-out{
+      border:1px solid #243041; background:#101828; color:#dbe2ee; padding:8px 12px; border-radius:10px; cursor:pointer;
+    }
+    .btn-out:hover{ filter:brightness(1.05) }
+
+    h2.section-title{
+      font-size:clamp(22px, 3vw, 28px);
+      margin:10px 0 14px;
+    }
+    .muted{ color:var(--muted); }
+
+    .grid{
+      display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:16px;
+    }
+    @media (max-width: 980px){ .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 640px){ .grid{ grid-template-columns: 1fr; } }
+
+    .tool-card{
+      background:linear-gradient(180deg, #0e1626, #0a0f1a); border:1px solid var(--border); border-radius:14px;
+      padding:16px; display:flex; flex-direction:column; gap:10px;
+      transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .tool-card:hover{
+      transform: translateY(-1px);
+      border-color:#2b3b55;
+      box-shadow:0 10px 28px rgba(0,0,0,.35);
+    }
+    .tool-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .tool-title{ font-size:1.05rem; margin:0; }
+    .tool-badge{ font-size:.75rem; color:#9fb2d3; background:#0f172a; border:1px solid #223049; padding:4px 8px; border-radius:999px; }
+    .tool-desc{ color:#b7c2d6; font-size:.95rem; line-height:1.45; margin:0; }
+    .tool-actions{ display:flex; gap:10px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:700;
+      padding:10px 12px; border-radius:10px; border:1px solid #1a2e22; background:var(--brand); color:#071b0d; cursor:pointer; text-decoration:none;
+    }
+    .btn.secondary{
+      background:#0f172a; color:#d5deeb; border:1px solid var(--border);
+    }
+
+    .chat-button{ position: fixed; right: 16px; bottom: 16px; }
+    .chat-button img{ width:56px; height:56px; border-radius:50%; border:1px solid var(--border); background:#0f172a; }
+
+    /* Loader simples enquanto valida sessão */
+    #auth-guard{ display:flex; align-items:center; justify-content:center; padding:28px; color:#bcd; }
+    .dot{ width:8px; height:8px; border-radius:50%; background:#7aa2ff; margin:0 4px; animation: b 1.4s infinite ease-in-out both; }
+    .dot:nth-child(2){ animation-delay: .2s }
+    .dot:nth-child(3){ animation-delay: .4s }
+    @keyframes b{ 0%,80%,100%{ transform:scale(0) } 40%{ transform:scale(1) } }
+  </style>
+</head>
+<body>
+
+  <!-- Cabeçalho (igual seu padrão) -->
+  <header>
+    <div class="logo-container" style="display:flex; align-items:center; gap:10px; padding:10px 16px;">
+      <a href="index.html"><img src="logo.png" alt="Logo da StarC Tecnologias" class="logo-img" style="height:38px"></a>
+      <h1>Ferramentas Contábeis</h1>
+      <button id="menu-toggle" aria-label="Abrir Menu">&#9776;</button>
+    </div>
+    <nav class="nav-desktop" style="padding:0 16px 12px;">
+      <a href="index.html">Início</a>
+      <a href="ferramentas.html" aria-current="page">Ferramentas</a>
+      <a href="servicos.html">Serviços</a>
+      <a href="sobre.html">Sobre Nós</a>
+      <a href="contato.html">Contato</a>
+      <a href="login.html" class="login-btn">Login</a>
+    </nav>
+  </header>
+
+  <!-- Menu mobile lateral -->
+  <nav id="sidebar" class="nav-mobile">
+    <a href="index.html">Início</a>
+    <a href="ferramentas.html">Ferramentas</a>
+    <a href="servicos.html">Serviços</a>
+    <a href="sobre.html">Sobre Nós</a>
+    <a href="contato.html">Contato</a>
+  </nav>
+
+  <main>
+    <!-- Topbar com usuário + sair -->
+    <div class="topbar">
+      <div>
+        <div class="hello" id="helloUser">Carregando…</div>
+        <span class="pill" id="planInfo">Assinante • Verificando acesso…</span>
+      </div>
+      <div>
+        <button class="btn-out" id="btnLogout">Sair</button>
+      </div>
+    </div>
+
+    <h2 class="section-title"><span class="emoji">🛠️</span> Suas <span class="highlight-title">Ferramentas</span></h2>
+    <p class="muted" style="margin-bottom:18px">Selecione uma das opções abaixo. Todos os módulos são atualizados para alto desempenho e baixo consumo no navegador.</p>
+
+    <!-- Guard de autenticação (aparece só durante a verificação) -->
+    <div id="auth-guard">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <span style="margin-left:10px">Validando sua sessão…</span>
+    </div>
+
+    <!-- Grid de ferramentas -->
+    <section id="tools" style="display:none">
+      <div class="grid">
+        <!-- Análise de Notas -->
+        <article class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">📄 Análise de Notas</h3>
+            <span class="tool-badge">XML / Excel</span>
+          </div>
+          <p class="tool-desc">
+            Leia e consolide NF-e a partir de arquivos ZIP/Excel: contagem de XML, soma de valores, canceladas/homologadas e busca por número da nota.
+          </p>
+          <div class="tool-actions">
+            <a class="btn" href="analise-notas.html">Abrir</a>
+            <a class="btn secondary" href="contato.html">Suporte</a>
+          </div>
+        </article>
+
+        <!-- Cálculo de Impostos (Base Presunção) -->
+        <article class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">💰 Cálculo de Impostos</h3>
+            <span class="tool-badge">Presumido</span>
+          </div>
+          <p class="tool-desc">
+            Calcule PIS/COFINS/CSLL/IRPJ com base de presunção definida (8% ou 32%) a partir do total das notas do ZIP de XML.
+          </p>
+          <div class="tool-actions">
+            <a class="btn" href="calculo-impostos.html">Abrir</a>
+            <a class="btn secondary" href="contato.html">Suporte</a>
+          </div>
+        </article>
+
+        <!-- Apuração Normais (Retenções) -->
+        <article class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">📑 Apurar Normais</h3>
+            <span class="tool-badge">Retenções</span>
+          </div>
+          <p class="tool-desc">
+            Relatório de retenções (ISS, PIS, COFINS, CSLL, IRPJ) e cálculo de valores a recolher, com leitura de NFSe/XML em lote.
+          </p>
+          <div class="tool-actions">
+            <a class="btn" href="calculo-normais.html">Abrir</a>
+            <a class="btn secondary" href="contato.html">Suporte</a>
+          </div>
+        </article>
+
+        <!-- Fluxos Financeiros Inteligentes -->
+        <article class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">📈 Fluxos Financeiros Inteligentes</h3>
+            <span class="tool-badge">Dashboard</span>
+          </div>
+          <p class="tool-desc">
+            Consolidação e insights financeiros com foco em recorrência, inadimplência e performance (em breve).
+          </p>
+          <div class="tool-actions">
+            <a class="btn secondary" href="contato.html">Quero saber mais</a>
+          </div>
+        </article>
+
+        <!-- Automação de RH e Pessoal -->
+        <article class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">👥 Automação de RH e Pessoal</h3>
+            <span class="tool-badge">IA + RPA</span>
+          </div>
+          <p class="tool-desc">
+            Rotinas de admissão, folha, conferência de documentos e integrações com planilhas/ERPs (em breve).
+          </p>
+          <div class="tool-actions">
+            <a class="btn secondary" href="contato.html">Quero saber mais</a>
+          </div>
+        </article>
+
+        <!-- Cobrança Recorrente por WhatsApp -->
+        <article class="tool-card">
+          <div class="tool-head">
+            <h3 class="tool-title">🔁 Assinaturas & Cobrança</h3>
+            <span class="tool-badge">WhatsApp</span>
+          </div>
+          <p class="tool-desc">
+            Gestão de produtos/serviços recorrentes (certificados digitais, mensalidades) com lembretes e cobrança automática via WhatsApp.
+          </p>
+          <div class="tool-actions">
+            <a class="btn secondary" href="contato.html">Quero saber mais</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Botão lateral de contato -->
+  <div class="chat-button">
+    <a href="contato.html" class="btn-atendimento" title="Fale conosco">
+      <img src="logo.png" alt="Atendente" />
+    </a>
+  </div>
+
+  <!-- Rodapé -->
+  <footer>
+    <p>&copy; 2025 StarC Tecnologias | Todos os direitos reservados</p>
+    <p><a href="https://www.instagram.com/diascharles53" target="_blank">Instagram</a> | <a href="contato.html">Entre em Contato</a></p>
+  </footer>
+
+  <script>
+    // ======== MENU MOBILE =========
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggleButton = document.getElementById('menu-toggle');
+      const sidebar = document.getElementById('sidebar');
+      if (toggleButton && sidebar) {
+        toggleButton.addEventListener('click', () => {
+          sidebar.classList.toggle('active');
+        });
+      }
+    });
+
+    // ======== AUTH GUARD (Supabase) =========
+    (async function(){
+      if(!window.supabase){
+        console.error('Supabase SDK não carregado.');
+        return;
+      }
+
+      // Seus dados do projeto Supabase
+      const SUPABASE_URL  = "https://eyadhwehwhxfymsmqzlj.supabase.co";
+      const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5YWRod2Vod2h4Znltc21xemxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MzM0MTUsImV4cCI6MjA3NzEwOTQxNX0.IXpjHg-L3e70oYnP7ouf7w0E6g1LoKTWfOkXppJg3Qk";
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+      const authGuard = document.getElementById('auth-guard');
+      const tools = document.getElementById('tools');
+      const hello = document.getElementById('helloUser');
+      const planInfo = document.getElementById('planInfo');
+
+      // Verifica sessão
+      const { data:{ session } } = await supabase.auth.getSession();
+      if(!session){
+        // Sem sessão → volta para login
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Busca profile
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('status, role, name')
+        .eq('id', session.user.id)
+        .single();
+
+      if(error || !data || data.status !== 'Ativo'){
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Mostra UI
+      const nome = data.name || session.user.email;
+      hello.textContent = `Bem-vindo, ${nome}!`;
+      planInfo.textContent = `Assinante • ${data.role === 'admin' ? 'Admin' : 'Usuário'}`;
+
+      if(authGuard) authGuard.style.display = 'none';
+      if(tools) tools.style.display = 'block';
+
+      // Sair
+      document.getElementById('btnLogout')?.addEventListener('click', async ()=>{
+        await supabase.auth.signOut();
+        localStorage.removeItem('stc_user');
+        window.location.href = 'login.html';
+      });
+    })();
+  </script>
+</body>
+</html>

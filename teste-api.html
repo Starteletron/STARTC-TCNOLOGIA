@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<meta charset="utf-8">
-<title>Teste POST Worker</title>
-<pre id="out">Testando...</pre>
+<!DOCTYPE html><meta charset="utf-8"><title>Registrar Admin</title>
+<pre id="out">Registrando...</pre>
 <script>
-  const URL = "https://startc.gestaodecontabilidad3.workers.dev/";
-
-  (async () => {
-    try {
-      const r = await fetch(URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tipo: "login_google", email: "teste@exemplo.com", nome: "Teste" })
-      });
-      const txt = await r.text();
-      document.getElementById('out').textContent = `HTTP ${r.status}\n\n${txt}`;
-    } catch (e) {
-      document.getElementById('out').textContent = 'ERRO: ' + e;
-    }
-  })();
+const API = "https://SEU_WORKER.workers.dev";
+(async ()=>{
+  const r = await fetch(API + "/api/register", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email:"teste@exemplo.com",
+      nome:"Teste",
+      senha:"minha_senha_forte",
+      role:"admin",
+      status:"Ativo"
+    })
+  });
+  document.getElementById('out').textContent = await r.text();
+})();
 </script>
-</html>

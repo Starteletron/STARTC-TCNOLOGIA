@@ -1,7 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://eyadhwehwhxfymsmqzlj.supabase.co";
-const SUPABASE_ANON = "process.env.SUPABASE_KEY";
+const SUPABASE_URL  = "https://eyadhwehwhxfymsmqzlj.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5YWRod2Vod2h4Znltc21xemxqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE1MzM0MTUsImV4cCI6MjA3NzEwOTQxNX0.IXpjHg-L3e70oYnP7ouf7w0E6g1LoKTWfOkXppJg3Qk";
 const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON);
 
 async function requireAuth(){
@@ -17,10 +17,8 @@ async function requireAuth(){
     location.href = 'login.html';
     return;
   }
-  // ok: personalize a UI com data.role/name/email
-  const user = session.user;
-  console.log('Bem-vindo:', user.email, data.role);
+  // Aqui você pode personalizar a UI com data.role/name/email
+  console.log('Bem-vindo:', session.user.email, data.role);
 }
 requireAuth();
 </script>
-

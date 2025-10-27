@@ -4,10 +4,10 @@
 <title>Teste POST Worker</title>
 <pre id="out">Testando...</pre>
 <script>
-  const URL = "https://startc.gestaodecontabilidad3.workers.dev/"; // sua URL do Worker
+  const URL = "https://startc.gestaodecontabilidad3.workers.dev/";
 
-  async function testarPOST(){
-    try{
+  (async () => {
+    try {
       const r = await fetch(URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -15,11 +15,9 @@
       });
       const txt = await r.text();
       document.getElementById('out').textContent = `HTTP ${r.status}\n\n${txt}`;
-    }catch(e){
+    } catch (e) {
       document.getElementById('out').textContent = 'ERRO: ' + e;
     }
-  }
-
-  testarPOST();
+  })();
 </script>
 </html>
